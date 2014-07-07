@@ -25,7 +25,7 @@ def parse_file(filename, parsed_data={}, calculate_time_lapses=True):
         for execution in executions:
             eval_type =  "time" if execution[0] == "0" else "memory"
             when =  "after" if execution[1] == "0" else "before"
-            prf_function = "HMAC_SHA256" if execution[2] == "0" else "HMAC_SHA1"
+            prf_function = "HMAC_SHA1" if execution[2] == "0" else "HMAC_SHA256"
             num_bits_derived_key = execution[3]
             result_eval = execution[4] # free ram (MB) for "memory" and "millisecs" for "time".
 
