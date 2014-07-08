@@ -48,7 +48,7 @@ def parse_file(filename, parsed_data={}, calculate_time_lapses=True):
             else:
                 if when not in parsed_data[eval_type][num_bits_derived_key][prf_function]:
                     parsed_data[eval_type][num_bits_derived_key][prf_function][when] = []
-                parsed_data[eval_type][num_bits_derived_key][prf_function][when].append( result_eval )
+                parsed_data[eval_type][num_bits_derived_key][prf_function][when].append( int(result_eval) )
     return parsed_data
 
 if __name__ == '__main__':
