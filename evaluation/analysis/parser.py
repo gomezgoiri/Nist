@@ -14,7 +14,9 @@
 '''
 
 import re
+import csv
 from argparse import ArgumentParser
+
 
 def parse_file(filename, parsed_data={}, calculate_time_lapses=True):
     with open(filename, 'r') as f:
@@ -50,6 +52,28 @@ def parse_file(filename, parsed_data={}, calculate_time_lapses=True):
                     parsed_data[eval_type][num_bits_derived_key][prf_function][when] = []
                 parsed_data[eval_type][num_bits_derived_key][prf_function][when].append( int(result_eval) )
     return parsed_data
+
+
+def parse_mWatt_data(csvpath, from_t=0, to_t=-1, watts_row = 1):
+    reader = csv.reader(open(csvpath, 'rb'), delimiter=',')
+    x = []
+    y = []
+    line = 0
+    for row in reader:
+	if line<3:
+	    line += 1
+	else:
+	    #print row
+	    t = float(row[0])
+	    if t>=from_t:
+		if t>to_t:
+		    break # exit
+		# else
+		x.append(t)
+		y.append(row[watts_row])
+	   
+    return x,y
+
 
 if __name__ == '__main__':
     argp = ArgumentParser()

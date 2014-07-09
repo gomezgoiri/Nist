@@ -23,7 +23,7 @@ from chart_utils import ChartImprover
 
 
 class DiagramGenerator:
-    
+  
     def __init__(self, title, data):
         
         # http://colorschemedesigner.com/previous/colorscheme2/index-es.html?tetrad;100;0;225;0.3;-0.8;0.3;0.5;0.1;0.9;0.5;0.75;0.3;-0.8;0.3;0.5;0.1;0.9;0.5;0.75;0.3;-0.8;0.3;0.5;0.1;0.9;0.5;0.75;0.3;-0.8;0.3;0.5;0.1;0.9;0.5;0.75;0
@@ -31,7 +31,7 @@ class DiagramGenerator:
         # self.linesShapes = ('xk-','+k-.','Dk--') # avoiding spaghetti lines
         self.ci = ChartImprover( title = None, # title,
                                  xlabel = 'Key length (bits)',
-                                 ylabel = {"label": 'Time (ms)', "x": -0.02, "y": 1.1},
+                                 ylabel = {"label": 'Memory used (KB)', "x": -0.02, "y": 1.1},
                                  legend_from_to = (0.04, 1.0) )
         self.generate(data)
     
@@ -43,7 +43,7 @@ class DiagramGenerator:
         for key_length in key_length_order:
 	  names.append( key_length )
 	  for algo in data[key_length]: # just one
-	    repetitions = data[key_length][algo]
+	    repetitions = data[key_length][algo]["after"]
 	    means.append( np.average(repetitions) )
             std_devs.append( np.std(repetitions) )
         return names, means, std_devs
@@ -98,15 +98,15 @@ if __name__ == '__main__':
     
     merged_data = {}
 
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_128_timing.txt" )
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_256_timing.txt", parsed_data )
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_512_timing.txt", parsed_data )
-    merged_data["duemilanove"] = parsed_data["time"]
+    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_128_memory.txt" )
+    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_256_memory.txt", parsed_data )
+    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_512_memory.txt", parsed_data )
+    merged_data["duemilanove"] = parsed_data["memory"]
     
-    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_128_timing.txt" )
-    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_256_timing.txt", parsed_data )
-    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_512_timing.txt", parsed_data )
-    merged_data["mega"] = parsed_data["time"]
+    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_128_memory.txt" )
+    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_256_memory.txt", parsed_data )
+    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_512_memory.txt", parsed_data )
+    merged_data["mega"] = parsed_data["memory"]
     
     d = DiagramGenerator("Time needed", merged_data)
-    d.save('/tmp/time_kdfs.svg')
+    d.save('/tmp/memory_kdfs.pdf')
