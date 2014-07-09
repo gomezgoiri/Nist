@@ -30,23 +30,10 @@ class DiagramGenerator:
         self.linesColors = ("#E6AC73", "#CFE673", "#507EA1", "#E67373", "#8A458A")
         # self.linesShapes = ('xk-','+k-.','Dk--') # avoiding spaghetti lines
         self.ci = ChartImprover( title = None, # title,
-                                 xlabel = 'Key length (bits)',
-                                 ylabel = {"label": 'Memory used (KB)', "x": -0.02, "y": 1.1},
+                                 xlabel = 'Key lengths',
+                                 ylabel = {"label": 'Sets of fields able to manage', "x": -0.02, "y": 1.1},
                                  legend_from_to = (0.04, 1.0) )
         self.generate(data)
-    
-    def get_line_data(self, data, key_length_order):
-	names = []
-	means = []
-        std_devs = []
-        #for key_length in data:
-        for key_length in key_length_order:
-	  names.append( key_length )
-	  for algo in data[key_length]: # just one
-	    repetitions = data[key_length][algo]["after"]
-	    means.append( np.average(repetitions) )
-            std_devs.append( np.std(repetitions) )
-        return names, means, std_devs
             
     def generate(self, data):
 	fig = plt.figure(figsize=(10, 6))
@@ -58,22 +45,34 @@ class DiagramGenerator:
         width = 0.3 # the width of the bars
         colors = cycle(self.linesColors)
         
-        _, avg, dev = self.get_line_data( data[devices_names[0]], groups_names )        
-        ax.bar( ind, avg, width,
-                yerr = dev,
+        simples_avg = data["simple"]["sram"]    
+        ax.bar( ind, simples_avg, width,
                 color = colors.next(),
-                #ecolor='black',
                 edgecolor = 'none',
-                label = "duemilanove"
+                label = "ssram"
+        )
+	        
+        simplee_avg = data["simple"]["eeprom"]     
+        ax.bar( ind, simplee_avg, width,
+                color = colors.next(),
+                edgecolor = 'none',
+                label = "seeprom",
+                bottom = simples_avg
         )
         
-        _, avg, dev = self.get_line_data( data[devices_names[1]], groups_names )
-        ax.bar( [i + width for i in ind], avg, width,
-                yerr = dev,
+        caches_avg = data["cachingKeys"]["sram"]
+        ax.bar( [i + width for i in ind], caches_avg, width,
                 color = colors.next(),
-                #ecolor='black',
                 edgecolor = 'none',
-                label = "mega"
+                label = "csram"
+        )
+	
+	cachee_avg = data["cachingKeys"]["eeprom"]
+        ax.bar( [i + width for i in ind], cachee_avg, width,
+                color = colors.next(),
+                edgecolor = 'none',
+                label = "ceeprom",
+                bottom = caches_avg
         )
         
         plt.xticks( [i+width for i in ind], groups_names)
@@ -96,17 +95,11 @@ if __name__ == '__main__':
                     help='Specify the folder containing the result files to parse.')
     args = argp.parse_args()
     
-    merged_data = {}
-
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_128_memory.txt" )
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_256_memory.txt", parsed_data )
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_512_memory.txt", parsed_data )
-    merged_data["duemilanove"] = parsed_data["memory"]
+    data = {"simple" : {}, "cachingKeys": {}}
+    data["simple"]["sram"] = (2, 2, 2)
+    data["simple"]["eeprom"] = (8, 3, 1)
+    data["cachingKeys"]["sram"] = (1, 1, 1)
+    data["cachingKeys"]["eeprom"] = (5, 2, 1)
     
-    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_128_memory.txt" )
-    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_256_memory.txt", parsed_data )
-    parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_512_memory.txt", parsed_data )
-    merged_data["mega"] = parsed_data["memory"]
-    
-    d = DiagramGenerator("Time needed", merged_data)
+    d = DiagramGenerator("Memory needed", data)
     d.save('/tmp/memory_kdfs.pdf')

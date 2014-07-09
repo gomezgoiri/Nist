@@ -24,6 +24,7 @@ def parse_file(filename, parsed_data={}, calculate_time_lapses=True):
         executions = prog.findall( f.read() )
 
         before_t = 0
+        i = 0
         for execution in executions:
             eval_type =  "time" if execution[0] == "0" else "memory"
             when =  "after" if execution[1] == "0" else "before"
@@ -47,10 +48,13 @@ def parse_file(filename, parsed_data={}, calculate_time_lapses=True):
                     if not parsed_data[eval_type][num_bits_derived_key][prf_function]:
                         parsed_data[eval_type][num_bits_derived_key][prf_function] = []
                     parsed_data[eval_type][num_bits_derived_key][prf_function].append( int(result_eval) - before_t )
+                    if prf_function=="HMAC_SHA1" and (i==17 or i==18):
+		      print before_t, int(result_eval)
             else:
                 if when not in parsed_data[eval_type][num_bits_derived_key][prf_function]:
                     parsed_data[eval_type][num_bits_derived_key][prf_function][when] = []
                 parsed_data[eval_type][num_bits_derived_key][prf_function][when].append( int(result_eval) )
+            i+=1
     return parsed_data
 
 

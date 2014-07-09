@@ -53,12 +53,15 @@ class DiagramGenerator:
         ax = fig.add_subplot(1,1,1)
         
         devices_names = data.keys()
+        print devices_names
         groups_names = ["128", "256", "512"]
         ind = range(1, len(groups_names)+1) # the x locations for the groups
         width = 0.3 # the width of the bars
         colors = cycle(self.linesColors)
         
-        _, avg, dev = self.get_line_data( data[devices_names[0]], groups_names )        
+        _, avg, dev = self.get_line_data( data[devices_names[0]], groups_names )
+        print "%s (128, 256, 512 bits) = avgs: %s, std devs: %s " % (devices_names[0], avg, dev)
+        #print data[devices_names[0]]
         ax.bar( ind, avg, width,
                 yerr = dev,
                 color = colors.next(),
@@ -68,6 +71,8 @@ class DiagramGenerator:
         )
         
         _, avg, dev = self.get_line_data( data[devices_names[1]], groups_names )
+        print "%s (128, 256, 512 bits) = avgs: %s, std devs: %s " % (devices_names[1], avg, dev)
+        #print data[devices_names[1]]
         ax.bar( [i + width for i in ind], avg, width,
                 yerr = dev,
                 color = colors.next(),
@@ -98,9 +103,9 @@ if __name__ == '__main__':
     
     merged_data = {}
 
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_128_timing.txt" )
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_256_timing.txt", parsed_data )
-    parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_512_timing.txt", parsed_data )
+    parsed_data = parse_file( args.results_path + "/uno/binary_100loops_128_timing.txt" )
+    parsed_data = parse_file( args.results_path + "/uno/binary_100loops_256_timing.txt", parsed_data )
+    parsed_data = parse_file( args.results_path + "/uno/binary_100loops_512_timing.txt", parsed_data )
     merged_data["Uno"] = parsed_data["time"]
     
     parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_128_timing.txt" )
