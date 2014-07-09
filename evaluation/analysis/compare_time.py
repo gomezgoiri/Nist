@@ -64,7 +64,7 @@ class DiagramGenerator:
                 color = colors.next(),
                 #ecolor='black',
                 edgecolor = 'none',
-                label = "duemilanove"
+                label = "Uno"
         )
         
         _, avg, dev = self.get_line_data( data[devices_names[1]], groups_names )
@@ -73,7 +73,7 @@ class DiagramGenerator:
                 color = colors.next(),
                 #ecolor='black',
                 edgecolor = 'none',
-                label = "mega"
+                label = "Mega"
         )
         
         plt.xticks( [i+width for i in ind], groups_names)
@@ -101,12 +101,12 @@ if __name__ == '__main__':
     parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_128_timing.txt" )
     parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_256_timing.txt", parsed_data )
     parsed_data = parse_file( args.results_path + "/duemilanove/binary_100loops_512_timing.txt", parsed_data )
-    merged_data["duemilanove"] = parsed_data["time"]
+    merged_data["Uno"] = parsed_data["time"]
     
     parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_128_timing.txt" )
     parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_256_timing.txt", parsed_data )
     parsed_data = parse_file( args.results_path + "/mega_adk/binary_100loops_512_timing.txt", parsed_data )
-    merged_data["mega"] = parsed_data["time"]
+    merged_data["Mega"] = parsed_data["time"]
     
     d = DiagramGenerator("Time needed", merged_data)
     d.save('/tmp/time_kdfs.svg')

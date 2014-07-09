@@ -66,7 +66,7 @@ def parse_mWatt_data(csvpath, from_t=0, to_t=-1, watts_row = 1):
 	    #print row
 	    t = float(row[0])
 	    if t>=from_t:
-		if t>to_t:
+		if to_t>=0 and t>to_t: # to_t<0 => a way to say: till the end!
 		    break # exit
 		# else
 		x.append(t)

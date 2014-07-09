@@ -30,13 +30,14 @@ class DiagramGenerator:
         self.linesColors = ("#E6AC73", "#CFE673", "#507EA1", "#E67373", "#8A458A")
         # self.linesShapes = ('xk-','+k-.','Dk--') # avoiding spaghetti lines
         self.ci = ChartImprover( title = None, # title,
-                                 xlabel = 'Key length (bits)',
-                                 ylabel = {"label": 'Time (ms)', "x": -0.02, "y": 1.1},
-                                 legend_from_to = (0.04, 1.0) )
+                                 xlabel = 'Time (ms)',
+                                 ylabel = {"label": 'Current (A)', "x": -0.02, "y": 1.1}, # Power (W)
+                                 legend_from_to = (0.04, 1.0),
+                                 line_width = 0.3 )
         self.generate(data)
             
     def generate(self, data):
-        fig = plt.figure( figsize=(10, 6) )
+        fig = plt.figure( figsize=(30, 6) )
 	ax = fig.add_subplot(111)
 	
 	colors = cycle(self.linesColors)
@@ -63,6 +64,6 @@ if __name__ == '__main__':
                     help='Specify the folder containing the result files to parse.')
     args = argp.parse_args()
     
-    parsed_data = parse_mWatt_data( args.results_path + "/energy/allKeysSize_current.csv", from_t=10, to_t=15 )
-    d = DiagramGenerator("Time needed", parsed_data)
-    d.save('/tmp/current_kdfs.svg')
+    parsed_data = parse_mWatt_data( args.results_path + "/energy/ExportedData_current.csv", from_t=3.1, to_t=30 ) # ExportedData_current, allKeysSize_current
+    d = DiagramGenerator("Current needed", parsed_data)
+    d.save('/tmp/current_kdfs.pdf') # or .svg
